@@ -34,38 +34,33 @@
         min-height: 100vh;
       }
 
-      /* ----- 返回主页按钮 ----- */
+      /* ----- 返回主页按钮 (改为圆形图标) ----- */
       .back-home-btn {
         position: fixed;
-        top: 20px;
-        left: 20px;
+        bottom: 95px; /* 位于音乐按钮上方 */
+        right: 28px;
         z-index: 100;
-        background: rgba(255, 240, 245, 0.85);
+        background: rgba(255, 235, 240, 0.85);
         backdrop-filter: blur(8px);
-        border: 1px solid rgba(255, 200, 210, 0.8);
-        color: #b34366;
-        padding: 10px 20px;
-        border-radius: 50px;
-        text-decoration: none;
-        font-weight: 600;
-        font-size: 0.95rem;
+        width: 55px;
+        height: 55px;
+        border-radius: 50%;
         display: flex;
         align-items: center;
-        gap: 8px;
-        box-shadow: 0 4px 12px rgba(255, 80, 120, 0.15);
-        transition: all 0.3s ease;
-        opacity: 1; /* 默认不透明 */
+        justify-content: center;
+        cursor: pointer;
+        color: #e64b6e;
+        font-size: 26px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        transition: all 0.2s;
+        text-decoration: none;
+        opacity: 0.9;
       }
 
       .back-home-btn:hover {
-        background: #ff7e9e;
-        color: white;
-        transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(255, 80, 120, 0.3);
-      }
-
-      .back-home-btn i {
-        font-size: 1.1rem;
+        transform: scale(1.1);
+        background: #ffe0e8;
+        color: #ff4d6d;
       }
 
       /* ----- 爱心漂浮 Canvas (浪漫背景) ----- */
@@ -510,8 +505,8 @@
   </head>
   <body>
     <!-- 返回主页按钮 -->
-    <a href="index.html" class="back-home-btn">
-      <i class="fas fa-arrow-left"></i> 返回
+    <a href="index.html" class="back-home-btn" title="返回主页">
+      <i class="fas fa-arrow-left"></i>
     </a>
 
     <!-- 背景Canvas: 爱心 + 玫瑰花瓣 -->
@@ -543,17 +538,6 @@
 
     <script>
       (function () {
-        // ======================= 返回按钮半透明交互逻辑 =======================
-        const backBtn = document.querySelector('.back-home-btn');
-        if (backBtn) {
-          backBtn.addEventListener('mouseout', () => {
-            backBtn.style.opacity = '0.6';
-          });
-          backBtn.addEventListener('mouseover', () => {
-            backBtn.style.opacity = '1';
-          });
-        }
-
         // ======================= 1. 定义重要时刻数据 (预留照片/视频位置，方便后续自行补充) =======================
         // 格式说明：
         // date: 显示日期字符串, title: 事件标题, description: 浪漫描述,
