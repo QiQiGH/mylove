@@ -1,0 +1,1010 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <title>💞 时光流水线 · 我们的重要时刻 💞</title>
+    <!-- Favicon: Small Heart -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>❤️</text></svg>">
+    <!-- Google Fonts 优雅字体 -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600;700&family=Quicksand:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Font Awesome 6 -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background: linear-gradient(145deg, #fff0f5 0%, #ffd9e5 100%);
+        font-family: "Quicksand", sans-serif;
+        overflow-x: hidden;
+        position: relative;
+        min-height: 100vh;
+      }
+
+      /* ----- 返回主页按钮 ----- */
+      .back-home-btn {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 100;
+        background: rgba(255, 240, 245, 0.85);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 200, 210, 0.8);
+        color: #b34366;
+        padding: 10px 20px;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 12px rgba(255, 80, 120, 0.15);
+        transition: all 0.3s ease;
+        opacity: 1; /* 默认不透明 */
+      }
+
+      .back-home-btn:hover {
+        background: #ff7e9e;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(255, 80, 120, 0.3);
+      }
+
+      .back-home-btn i {
+        font-size: 1.1rem;
+      }
+
+      /* ----- 爱心漂浮 Canvas (浪漫背景) ----- */
+      #loveCanvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 1;
+      }
+
+      /* ----- 玫瑰花瓣飘落 Canvas (香槟色浪漫) ----- */
+      #petalCanvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 2;
+      }
+
+      /* 主容器 */
+      .timeline-wrapper {
+        position: relative;
+        z-index: 10;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 30px 20px 60px;
+      }
+
+      /* 页眉浪漫区 */
+      .romance-header {
+        text-align: center;
+        margin-bottom: 50px;
+        background: rgba(255, 240, 245, 0.6);
+        backdrop-filter: blur(10px);
+        border-radius: 80px;
+        padding: 25px 20px;
+        box-shadow: 0 12px 28px rgba(255, 80, 120, 0.2);
+        border: 1px solid rgba(255, 200, 210, 0.8);
+      }
+
+      .heart-icon {
+        font-size: 60px;
+        color: #ff4d6d;
+        filter: drop-shadow(0 6px 12px rgba(255, 60, 100, 0.4));
+        animation: heartbeat 1.6s infinite ease-in-out;
+        display: inline-block;
+        margin-bottom: 10px;
+      }
+
+      @keyframes heartbeat {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.15);
+          text-shadow: 0 0 10px #ff99aa;
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      .main-title {
+        font-family: "Dancing Script", cursive;
+        font-size: 3rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #e8436e, #ff89a9);
+        background-clip: text;
+        -webkit-background-clip: text;
+        color: transparent;
+        margin: 10px 0 5px;
+      }
+
+      .subtitle {
+        color: #b84c6c;
+        font-size: 1.2rem;
+        letter-spacing: 2px;
+        font-weight: 500;
+      }
+
+      /* ========= 时间轴样式 (垂直流水线) ========= */
+      .timeline {
+        position: relative;
+        padding: 20px 0;
+      }
+
+      /* 中间轴线 */
+      .timeline::before {
+        content: "";
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 4px;
+        height: 100%;
+        background: linear-gradient(to bottom, #ffb7c5, #ff7e9e, #ffb7c5);
+        border-radius: 4px;
+        box-shadow: 0 0 8px #ff99aa;
+        z-index: 1;
+      }
+
+      /* 每个时间节点卡片容器 */
+      .timeline-item {
+        position: relative;
+        margin-bottom: 70px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        z-index: 5;
+      }
+
+      /* 奇数项内容居左，偶数项居右 (左右交替) */
+      .timeline-item:nth-child(odd) .timeline-content {
+        margin-left: auto;
+        margin-right: 5%;
+        width: 45%;
+      }
+
+      .timeline-item:nth-child(even) .timeline-content {
+        margin-right: auto;
+        margin-left: 5%;
+        width: 45%;
+      }
+
+      /* 时间节点圆点标记 */
+      .timeline-dot {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 24px;
+        height: 24px;
+        background: #ff6b8f;
+        border: 4px solid #fff0f5;
+        border-radius: 50%;
+        box-shadow:
+          0 0 0 4px #ffb0c0,
+          0 0 0 8px rgba(255, 105, 140, 0.2);
+        z-index: 10;
+        transition: 0.3s;
+      }
+
+      .timeline-item:hover .timeline-dot {
+        transform: translateX(-50%) scale(1.2);
+        background: #ff3358;
+        box-shadow: 0 0 0 6px #ffb7c5;
+      }
+
+      /* 浪漫卡片内容 */
+      .timeline-content {
+        background: rgba(255, 248, 245, 0.85);
+        backdrop-filter: blur(12px);
+        border-radius: 48px;
+        padding: 20px 24px;
+        box-shadow: 0 20px 30px rgba(255, 80, 120, 0.2);
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255, 220, 200, 0.9);
+        position: relative;
+      }
+
+      .timeline-content:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 28px 38px rgba(255, 70, 110, 0.3);
+        background: rgba(255, 252, 250, 0.92);
+      }
+
+      /* 日期标签 */
+      .event-date {
+        display: inline-block;
+        background: linear-gradient(120deg, #ff7e9e, #ff4d6d);
+        padding: 6px 18px;
+        border-radius: 50px;
+        color: white;
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin-bottom: 15px;
+        letter-spacing: 1px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .event-title {
+        font-family: "Dancing Script", cursive;
+        font-size: 1.9rem;
+        font-weight: 700;
+        color: #bc3f62;
+        margin-bottom: 12px;
+      }
+
+      .event-desc {
+        color: #a13e5a;
+        line-height: 1.5;
+        margin-bottom: 18px;
+        font-size: 0.95rem;
+      }
+
+      /* 媒体预览区 (照片/视频占位) */
+      .media-preview {
+        margin-top: 12px;
+        border-radius: 32px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: 0.25s;
+        background: rgba(255, 210, 220, 0.4);
+        min-height: 160px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        border: 2px solid #ffc0d0;
+      }
+
+      .media-preview img,
+      .media-preview video {
+        width: 100%;
+        height: auto;
+        max-height: 220px;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.4s ease;
+      }
+
+      .media-preview:hover {
+        transform: scale(1.01);
+        border-color: #ff8aa8;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      .play-icon-overlay {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0, 0, 0, 0.6);
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 24px;
+        backdrop-filter: blur(4px);
+        pointer-events: none;
+        transition: 0.2s;
+      }
+
+      .media-preview:hover .play-icon-overlay {
+        background: #ff4d6d;
+        transform: translate(-50%, -50%) scale(1.1);
+      }
+
+      /* 没有媒体时的占位符样式 */
+      .media-placeholder {
+        padding: 40px 20px;
+        text-align: center;
+        color: #b15b78;
+        font-style: italic;
+        background: rgba(255, 235, 240, 0.6);
+        width: 100%;
+      }
+
+      /* 模态框 (优雅动画过渡) */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.85);
+        backdrop-filter: blur(20px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition:
+          opacity 0.4s ease,
+          visibility 0.4s;
+        cursor: pointer;
+      }
+
+      .modal-overlay.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .modal-container {
+        max-width: 85vw;
+        max-height: 85vh;
+        background: rgba(255, 245, 245, 0.1);
+        border-radius: 48px;
+        overflow: hidden;
+        box-shadow: 0 30px 50px rgba(0, 0, 0, 0.5);
+        transform: scale(0.9);
+        transition: transform 0.35s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        border: 2px solid #ffb7c5;
+      }
+
+      .modal-overlay.active .modal-container {
+        transform: scale(1);
+      }
+
+      .modal-container img {
+        width: 100%;
+        height: auto;
+        max-height: 85vh;
+        display: block;
+        object-fit: contain;
+      }
+
+      .modal-container video {
+        width: 100%;
+        max-height: 85vh;
+        outline: none;
+      }
+
+      .close-modal {
+        position: absolute;
+        top: 30px;
+        right: 40px;
+        background: rgba(255, 255, 240, 0.3);
+        backdrop-filter: blur(10px);
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        color: white;
+        cursor: pointer;
+        transition: 0.2s;
+        z-index: 1001;
+      }
+
+      .close-modal:hover {
+        background: #ff4d6d;
+        transform: rotate(90deg);
+      }
+
+      /* 音乐控制按钮 */
+      .music-btn {
+        position: fixed;
+        bottom: 28px;
+        right: 28px;
+        background: rgba(255, 235, 240, 0.85);
+        backdrop-filter: blur(8px);
+        width: 55px;
+        height: 55px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 30;
+        color: #e64b6e;
+        font-size: 26px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        transition: all 0.2s;
+      }
+
+      .music-btn:hover {
+        transform: scale(1.1);
+        background: #ffe0e8;
+      }
+
+      /* 响应式: 手机端时间轴变为单侧布局 */
+      @media (max-width: 768px) {
+        .timeline::before {
+          left: 20px;
+        }
+        .timeline-item {
+          flex-direction: column;
+          align-items: flex-start;
+          margin-left: 20px;
+        }
+        .timeline-item:nth-child(odd) .timeline-content,
+        .timeline-item:nth-child(even) .timeline-content {
+          width: calc(100% - 40px);
+          margin-left: 40px !important;
+          margin-right: 0 !important;
+        }
+        .timeline-dot {
+          left: 20px;
+          transform: translateX(0);
+        }
+        .timeline-item:hover .timeline-dot {
+          transform: scale(1.2);
+        }
+        .main-title {
+          font-size: 2.2rem;
+        }
+      }
+
+      /* 点击爱心特效容器 */
+      .click-heart-area {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 20;
+      }
+      .floating-love {
+        position: absolute;
+        font-size: 28px;
+        pointer-events: none;
+        animation: floatUp 1.2s ease-out forwards;
+        color: #ff3b6f;
+        text-shadow: 0 0 5px #ff99bb;
+      }
+      @keyframes floatUp {
+        0% {
+          opacity: 1;
+          transform: translateY(0) scale(0.6);
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(-120px) scale(1.2);
+        }
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 40px;
+        color: #b15b78;
+        font-size: 0.85rem;
+        background: rgba(255, 240, 245, 0.5);
+        padding: 12px;
+        border-radius: 60px;
+        width: fit-content;
+        margin-left: auto;
+        margin-right: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 返回主页按钮 -->
+    <a href="index.html" class="back-home-btn">
+      <i class="fas fa-arrow-left"></i> 返回
+    </a>
+
+    <!-- 背景Canvas: 爱心 + 玫瑰花瓣 -->
+    <canvas id="loveCanvas"></canvas>
+    <canvas id="petalCanvas"></canvas>
+    <div class="click-heart-area" id="clickHeartArea"></div>
+    <div class="music-btn" id="musicToggleBtn">
+      <i class="fas fa-music"></i>
+    </div>
+
+    <div class="timeline-wrapper">
+      <div class="romance-header">
+        <div class="heart-icon"><i class="fas fa-heart"></i></div>
+        <div class="main-title">Our Love Timeline</div>
+        <div class="subtitle">💗 时光流水线 · 珍藏每一个浪漫瞬间 💗</div>
+        <p style="margin-top: 12px; color: #b13e60">
+          <i class="fas fa-camera"></i> 点击照片或视频，优雅放大观赏
+        </p>
+      </div>
+
+      <div class="timeline" id="timelineContainer">
+        <!-- 动态渲染时间轴内容 -->
+      </div>
+      <footer>
+        <i class="fas fa-feather-alt"></i> 每一帧都是心动的证据 ·
+        我们的故事未完待续
+      </footer>
+    </div>
+
+    <script>
+      (function () {
+        // ======================= 返回按钮半透明交互逻辑 =======================
+        const backBtn = document.querySelector('.back-home-btn');
+        if (backBtn) {
+          backBtn.addEventListener('mouseout', () => {
+            backBtn.style.opacity = '0.6';
+          });
+          backBtn.addEventListener('mouseover', () => {
+            backBtn.style.opacity = '1';
+          });
+        }
+
+        // ======================= 1. 定义重要时刻数据 (预留照片/视频位置，方便后续自行补充) =======================
+        // 格式说明：
+        // date: 显示日期字符串, title: 事件标题, description: 浪漫描述,
+        // mediaType: 'photo' 或 'video', mediaSrc: 媒体路径 (图片或视频链接)
+        // 如果暂无媒体可置空，将显示占位图标；后续自行替换真实图片/视频链接即可。
+        // 注意：视频建议使用 mp4 格式，图片使用 jpg/png/webp。以下为示例数据，展示不同风格。
+        const momentsData = [
+          {
+            date: "2024.05.20",
+            title: "💖 初遇心动时刻",
+            description:
+              "那一天阳光正好，你穿着碎花裙，回眸一笑让整个世界都变得柔软。从此我的目光再也离不开你。",
+            mediaType: "photo",
+            mediaSrc:
+              "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 160'%3E%3Crect width='200' height='160' fill='%23ffe0ec'/%3E%3Ctext x='100' y='80' font-size='28' text-anchor='middle' fill='%23e8436e'%3E🌹 初次约会 🌹%3C/text%3E%3Ctext x='100' y='115' font-size='14' fill='%23b33b5c' text-anchor='middle'%3E( 替换成你们的甜蜜照片 )%3C/text%3E%3C/svg%3E",
+            altText: "初遇纪念",
+          },
+          {
+            date: "2024.07.15",
+            title: "🎂 第一个生日惊喜",
+            description:
+              "精心布置的烛光晚餐，还有你眼里闪烁的星光。蛋糕上的草莓像你一样甜。",
+            mediaType: "photo",
+            mediaSrc:
+              "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 160'%3E%3Crect width='200' height='160' fill='%23fff0e0'/%3E%3Ctext x='100' y='80' font-size='32' text-anchor='middle' fill='%23ff8c42'%3E🎂🎈%3C/text%3E%3Ctext x='100' y='120' font-size='14' fill='%23aa6f3c' text-anchor='middle'%3E生日惊喜照片%3C/text%3E%3C/svg%3E",
+            altText: "生日派对",
+          },
+          {
+            date: "2024.10.02",
+            title: "✈️ 浪漫旅行 · 海边日落",
+            description:
+              "第一次一起看海，夕阳把我们的影子拉得好长，你说想就这样一直到老。",
+            mediaType: "video",
+            mediaSrc: "", // 预留视频链接，后续可以填入mp4地址，例如 "videos/our_trip.mp4"
+            altText: "海边视频",
+            placeholderMsg: "🌊 待补充你们的旅行视频 🌊",
+          },
+          {
+            date: "2024.12.25",
+            title: "🎄 圣诞初雪",
+            description: "漫天雪花中我们拥吻，你送我的围巾带着香槟玫瑰的香气。",
+            mediaType: "photo",
+            mediaSrc:
+              "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 160'%3E%3Crect width='200' height='160' fill='%23e6f2ff'/%3E%3Ctext x='100' y='80' font-size='36' text-anchor='middle' fill='%235f7bbf'%3E☃️🎄%3C/text%3E%3Ctext x='100' y='125' font-size='14' fill='%233c5a8f' text-anchor='middle'%3E圣诞合照位置%3C/text%3E%3C/svg%3E",
+            altText: "圣诞合影",
+          },
+          {
+            date: "2025.02.14",
+            title: "💌 情人节·香槟玫瑰之约",
+            description:
+              "你送我的香槟玫瑰永生花，你说花语是『爱上你是我今生最大的幸福』。",
+            mediaType: "photo",
+            mediaSrc:
+              "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 160'%3E%3Crect width='200' height='160' fill='%23fdebd0'/%3E%3Ctext x='100' y='80' font-size='40' text-anchor='middle' fill='%23e6b86e'%3E🥂🌹%3C/text%3E%3Ctext x='100' y='125' font-size='13' fill='%23995f2e' text-anchor='middle'%3E情人节纪念照%3C/text%3E%3C/svg%3E",
+            altText: "情人节",
+          },
+          {
+            date: "2025.04.01",
+            title: "🌸 樱花季 · 我们的纪念日",
+            description: "粉色樱花雨中，你笑靥如花。以后的每个春天都要一起。",
+            mediaType: "video",
+            mediaSrc: "",
+            placeholderMsg: "🎥 待上传你们的樱花视频 🎥",
+            altText: "樱花视频",
+          },
+        ];
+
+        // 获取 timeline 容器
+        const timelineContainer = document.getElementById("timelineContainer");
+
+        // 渲染时间轴函数
+        function renderTimeline() {
+          let html = "";
+          momentsData.forEach((item, index) => {
+            // 媒体区域渲染
+            let mediaHtml = "";
+            if (item.mediaType === "photo") {
+              if (item.mediaSrc && item.mediaSrc.trim() !== "") {
+                mediaHtml = `
+                            <div class="media-preview" data-type="photo" data-src="${item.mediaSrc}">
+                                <img src="${item.mediaSrc}" alt="${item.altText || "浪漫照片"}" loading="lazy">
+                            </div>
+                        `;
+              } else {
+                mediaHtml = `
+                            <div class="media-preview" data-type="photo" data-src="">
+                                <div class="media-placeholder">
+                                    <i class="fas fa-image" style="font-size: 40px; opacity:0.7;"></i>
+                                    <p>📸 预留照片位置，请补充图片链接</p>
+                                </div>
+                            </div>
+                        `;
+              }
+            } else if (item.mediaType === "video") {
+              if (item.mediaSrc && item.mediaSrc.trim() !== "") {
+                mediaHtml = `
+                            <div class="media-preview" data-type="video" data-src="${item.mediaSrc}">
+                                <video muted preload="metadata" poster="">
+                                    <source src="${item.mediaSrc}" type="video/mp4">
+                                    您的浏览器不支持视频播放
+                                </video>
+                                <div class="play-icon-overlay"><i class="fas fa-play"></i></div>
+                            </div>
+                        `;
+              } else {
+                mediaHtml = `
+                            <div class="media-preview" data-type="video" data-src="">
+                                <div class="media-placeholder">
+                                    <i class="fas fa-video" style="font-size: 40px; opacity:0.7;"></i>
+                                    <p>🎬 ${item.placeholderMsg || "待补充视频 (替换 mediaSrc 为真实 mp4 地址)"}</p>
+                                </div>
+                            </div>
+                        `;
+              }
+            }
+
+            html += `
+                    <div class="timeline-item" data-idx="${index}">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <div class="event-date"><i class="far fa-calendar-alt"></i> ${item.date}</div>
+                            <div class="event-title">${item.title}</div>
+                            <div class="event-desc">${item.description}</div>
+                            ${mediaHtml}
+                        </div>
+                    </div>
+                `;
+          });
+          timelineContainer.innerHTML = html;
+
+          // 绑定媒体点击事件 (模态框动画)
+          attachMediaClickEvents();
+        }
+
+        // 优雅模态框展示图片/视频，带动画过渡
+        let activeModal = null;
+
+        function showMediaModal(type, src) {
+          // 如果 src 为空或无效，给出提示
+          if (!src || src.trim() === "") {
+            // 创建临时toast提示
+            const toast = document.createElement("div");
+            toast.innerText = "💗 暂未添加媒体文件，后续补充甜蜜素材吧 💗";
+            toast.style.position = "fixed";
+            toast.style.bottom = "30%";
+            toast.style.left = "50%";
+            toast.style.transform = "translateX(-50%)";
+            toast.style.background = "#ffc0d0";
+            toast.style.color = "#9e3557";
+            toast.style.padding = "12px 24px";
+            toast.style.borderRadius = "60px";
+            toast.style.zIndex = "2000";
+            toast.style.fontWeight = "bold";
+            toast.style.backdropFilter = "blur(10px)";
+            toast.style.boxShadow = "0 8px 20px rgba(0,0,0,0.2)";
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 1800);
+            return;
+          }
+
+          if (activeModal) {
+            activeModal.remove();
+            activeModal = null;
+          }
+
+          const modal = document.createElement("div");
+          modal.className = "modal-overlay";
+          const modalContainer = document.createElement("div");
+          modalContainer.className = "modal-container";
+
+          if (type === "photo") {
+            const img = document.createElement("img");
+            img.src = src;
+            img.alt = "浪漫回忆";
+            modalContainer.appendChild(img);
+          } else if (type === "video") {
+            const video = document.createElement("video");
+            video.controls = true;
+            video.autoplay = true;
+            video.loop = false;
+            video.muted = false;
+            video.src = src;
+            video.style.maxWidth = "100%";
+            video.style.maxHeight = "85vh";
+            modalContainer.appendChild(video);
+            // 自动播放需要用户交互？但点击模态框播放一般可以自动，由于浏览器策略，但加上 controls 用户可点播
+            video
+              .play()
+              .catch((e) => console.log("自动播放失败，用户可手动播放"));
+          }
+
+          modal.appendChild(modalContainer);
+          // 关闭按钮
+          const closeBtn = document.createElement("div");
+          closeBtn.className = "close-modal";
+          closeBtn.innerHTML = '<i class="fas fa-times"></i>';
+          modal.appendChild(closeBtn);
+
+          document.body.appendChild(modal);
+          // 触发过渡动画
+          setTimeout(() => modal.classList.add("active"), 20);
+
+          const closeModal = () => {
+            modal.classList.remove("active");
+            setTimeout(() => {
+              if (modal.parentNode) modal.remove();
+              if (activeModal === modal) activeModal = null;
+            }, 400);
+          };
+
+          closeBtn.addEventListener("click", closeModal);
+          modal.addEventListener("click", (e) => {
+            if (e.target === modal) closeModal();
+          });
+
+          activeModal = modal;
+        }
+
+        function attachMediaClickEvents() {
+          const previews = document.querySelectorAll(".media-preview");
+          previews.forEach((preview) => {
+            preview.addEventListener("click", (e) => {
+              e.stopPropagation();
+              const type = preview.dataset.type;
+              let src = preview.dataset.src;
+              // 如果存在 video 元素且没有 dataset.src 但有 video 标签内的src
+              if ((!src || src === "") && type === "video") {
+                const videoElem = preview.querySelector("video");
+                if (videoElem && videoElem.src) src = videoElem.src;
+              }
+              if ((!src || src === "") && type === "photo") {
+                const imgElem = preview.querySelector("img");
+                if (imgElem && imgElem.src) src = imgElem.src;
+              }
+              showMediaModal(type, src);
+              // 同时生成漂浮爱心
+              const rect = preview.getBoundingClientRect();
+              createFloatingLove(
+                rect.left + rect.width / 2,
+                rect.top + rect.height / 2,
+              );
+            });
+          });
+        }
+
+        // ---------- 漂浮爱心特效 (点击任意位置) ----------
+        const heartArea = document.getElementById("clickHeartArea");
+        function createFloatingLove(x, y) {
+          const loveDiv = document.createElement("div");
+          loveDiv.classList.add("floating-love");
+          loveDiv.innerHTML = "❤️";
+          loveDiv.style.left = x + "px";
+          loveDiv.style.top = y + "px";
+          loveDiv.style.position = "fixed";
+          loveDiv.style.fontSize = Math.random() * 24 + 18 + "px";
+          loveDiv.style.zIndex = "999";
+          heartArea.appendChild(loveDiv);
+          setTimeout(() => loveDiv.remove(), 1200);
+        }
+        document.body.addEventListener("click", (e) => {
+          // 避免在模态框点击时额外产生多余爱心，但不影响浪漫气氛
+          createFloatingLove(e.clientX, e.clientY);
+        });
+
+        // ---------- 浪漫背景 Canvas (爱心飘浮 + 玫瑰花瓣飘落) ----------
+        // 爱心 Canvas
+        const loveCanvas = document.getElementById("loveCanvas");
+        let loveCtx = loveCanvas.getContext("2d");
+        let loveHearts = [];
+        let loveAnim;
+        function resizeLove() {
+          loveCanvas.width = window.innerWidth;
+          loveCanvas.height = window.innerHeight;
+        }
+        class LoveHeart {
+          constructor(x, y, size, vy, vx, alpha) {
+            this.x = x;
+            this.y = y;
+            this.size = size;
+            this.vy = vy;
+            this.vx = vx;
+            this.alpha = alpha;
+          }
+          draw() {
+            loveCtx.save();
+            loveCtx.font = `${this.size}px "Segoe UI Emoji"`;
+            loveCtx.textAlign = "center";
+            loveCtx.textBaseline = "middle";
+            loveCtx.globalAlpha = this.alpha;
+            loveCtx.fillStyle = "#ff6b8f";
+            loveCtx.fillText("❤️", this.x, this.y);
+            loveCtx.restore();
+          }
+          update() {
+            this.y += this.vy;
+            this.x += this.vx;
+            if (this.y + this.size < 0) this.y = loveCanvas.height + this.size;
+            if (this.x > loveCanvas.width + 50) this.x = -50;
+            if (this.x + 50 < 0) this.x = loveCanvas.width + 50;
+          }
+        }
+        function initLoveHearts(cnt = 30) {
+          loveHearts = [];
+          for (let i = 0; i < cnt; i++) {
+            let size = Math.random() * 20 + 14;
+            let x = Math.random() * loveCanvas.width;
+            let y = Math.random() * loveCanvas.height;
+            let vy = -(Math.random() * 0.8 + 0.3);
+            let vx = (Math.random() - 0.5) * 0.4;
+            let alpha = Math.random() * 0.5 + 0.3;
+            loveHearts.push(new LoveHeart(x, y, size, vy, vx, alpha));
+          }
+        }
+        function drawLove() {
+          if (!loveCtx) return;
+          loveCtx.clearRect(0, 0, loveCanvas.width, loveCanvas.height);
+          for (let h of loveHearts) {
+            h.draw();
+            h.update();
+          }
+          loveAnim = requestAnimationFrame(drawLove);
+        }
+        function startLoveCanvas() {
+          resizeLove();
+          initLoveHearts(36);
+          drawLove();
+        }
+        window.addEventListener("resize", () => {
+          resizeLove();
+        });
+        startLoveCanvas();
+
+        // 玫瑰花瓣 Canvas
+        const petalCanvas = document.getElementById("petalCanvas");
+        let petalCtx = petalCanvas.getContext("2d");
+        let petals = [];
+        let petalAnim;
+        const PETAL_COLORS = [
+          "#ffb7c5",
+          "#ffd1b3",
+          "#f5c9a4",
+          "#ff9eb5",
+          "#fad6a5",
+        ];
+        function resizePetal() {
+          petalCanvas.width = window.innerWidth;
+          petalCanvas.height = window.innerHeight;
+        }
+        class Petal {
+          constructor(x, y, size, vy, vx, rot, rotspeed, color) {
+            this.x = x;
+            this.y = y;
+            this.size = size;
+            this.vy = vy;
+            this.vx = vx;
+            this.rot = rot;
+            this.rotspeed = rotspeed;
+            this.color = color;
+          }
+          draw() {
+            petalCtx.save();
+            petalCtx.translate(this.x, this.y);
+            petalCtx.rotate(this.rot);
+            petalCtx.font = `${this.size}px "Segoe UI Emoji"`;
+            petalCtx.textAlign = "center";
+            petalCtx.textBaseline = "middle";
+            petalCtx.fillStyle = this.color;
+            petalCtx.fillText("🌹", 0, 0);
+            petalCtx.restore();
+          }
+          update() {
+            this.y += this.vy;
+            this.x += this.vx;
+            this.rot += this.rotspeed;
+            if (this.y > petalCanvas.height + 40) {
+              this.y = -30;
+              this.x = Math.random() * petalCanvas.width;
+            }
+            if (this.x > petalCanvas.width + 50) this.x = -50;
+            if (this.x < -50) this.x = petalCanvas.width + 50;
+          }
+        }
+        function initPetals(cnt = 32) {
+          petals = [];
+          for (let i = 0; i < cnt; i++) {
+            let size = Math.random() * 24 + 18;
+            let x = Math.random() * petalCanvas.width;
+            let y = Math.random() * petalCanvas.height;
+            let vy = Math.random() * 1.0 + 0.6;
+            let vx = (Math.random() - 0.5) * 0.5;
+            let rot = Math.random() * Math.PI * 2;
+            let rotspeed = (Math.random() - 0.5) * 0.02;
+            let color =
+              PETAL_COLORS[Math.floor(Math.random() * PETAL_COLORS.length)];
+            petals.push(new Petal(x, y, size, vy, vx, rot, rotspeed, color));
+          }
+        }
+        function drawPetals() {
+          if (!petalCtx) return;
+          petalCtx.clearRect(0, 0, petalCanvas.width, petalCanvas.height);
+          for (let p of petals) {
+            p.draw();
+            p.update();
+          }
+          petalAnim = requestAnimationFrame(drawPetals);
+        }
+        function startPetals() {
+          resizePetal();
+          initPetals(38);
+          drawPetals();
+        }
+        window.addEventListener("resize", () => {
+          resizePetal();
+        });
+        startPetals();
+
+        // ---------- 音乐控制按钮 (浪漫钢琴曲) ----------
+        let audio = null;
+        let isPlaying = false;
+        const musicBtn = document.getElementById("musicToggleBtn");
+        const musicURL =
+          "https://cdn.pixabay.com/download/audio/2022/02/22/audio_d16a1a6e1c.mp3?filename=romantic-piano-184138.mp3";
+        function initAudio() {
+          if (!audio) {
+            audio = new Audio(musicURL);
+            audio.loop = true;
+            audio.volume = 0.4;
+          }
+        }
+        musicBtn.addEventListener("click", () => {
+          initAudio();
+          if (isPlaying) {
+            audio.pause();
+            isPlaying = false;
+            musicBtn.innerHTML = '<i class="fas fa-music"></i>';
+          } else {
+            audio
+              .play()
+              .then(() => {
+                isPlaying = true;
+                musicBtn.innerHTML = '<i class="fas fa-pause"></i>';
+              })
+              .catch(() => {
+                alert("轻触播放浪漫旋律💗");
+              });
+          }
+        });
+
+        // 渲染时间轴
+        renderTimeline();
+      })();
+    </script>
+  </body>
+</html>
